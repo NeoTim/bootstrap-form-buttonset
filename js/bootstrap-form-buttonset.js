@@ -143,7 +143,7 @@
 			if(this._options.isJustified){
 				btns = group.children(".btn-group").children("button");
 			} else {
-				btns.children('button');
+				btns = group.children('button');
 			}
 			btns.each(function () {
 				var $btn = $(this);
