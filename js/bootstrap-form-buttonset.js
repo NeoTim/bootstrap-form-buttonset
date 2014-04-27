@@ -1,11 +1,3 @@
-/**
- * bootstrap-form-buttonset
- * Lightweight plugin to skin/transform radios and/or checkboxes into Bootstrap button groups.
- * @see https://github.com/akger1379/bootstrap-form-buttonset
- * @see https://gist.github.com/akger1379/8625327
- * Copyright (c) 2014, André Kroll
- * Released under the MIT license
- */
 ;
 (function ($, window, document, undefined) {
 	"use strict";
@@ -14,6 +6,7 @@
 	var PLUGIN_DEFAULTS = {
 		buttonClasses: 'btn-default',
 		isVertical: false,
+		isJustified: false,
 		isOptional: false
 	};
 
@@ -21,7 +14,7 @@
 		this._$element = $(element);
 		this._options = this._validateOptions(options, PLUGIN_DEFAULTS);
 		this._inputs = {};
-	};
+	}
 
 	PLUGIN.prototype = {
 
@@ -59,22 +52,31 @@
 					$btnGroup.addClass('btn-group');
 				}
 				$btnGroup.addClass('btn-group-vertical');
+			} else if(this._options.isJustified) {
+				if (!isBootstrap3()) {
+					$btnGroup.addClass('btn-group');
+				}
+				$btnGroup.addClass('btn-group-justified');
 			} else {
 				$btnGroup.addClass('btn-group');
 			}
 			this._$element.children('input[type=radio], input[type=checkbox]').each(function () {
 				var $input = $(this);
 				var id = $input.attr('id');
-				if (id == '') {
-					throw 'Input elements need to have a valid ID.'
+				if (id === '') {
+					throw 'Input elements need to have a valid ID.';
 				}
 				// generate button for input element
+				//var $btngrp = $('<button class="btn-group"><button class="btn"></button></button>')
 				var $btn = $('<button class="btn"></button>');
 				$btn.attr('data-input-id', id);
 				$btn.addClass(that._options.buttonClasses);
 				$btn.html(that._$element.find('label[for="' + id + '"]').html());
-				$btn.appendTo($btnGroup);
 				// define click event
+				$btn.appendTo($btnGroup);
+				if(that._options.isJustified){
+					$btn.wrap('<div class="btn-group"></div>');					
+				}
 				$btn.on('click', function (e) {
 					var $clickedBtn = $(this);
 					var inputId = $clickedBtn.attr('data-input-id');
@@ -115,6 +117,7 @@
 			});
 
 			// hide input elements and show button group
+			//if()
 			this._$element.wrapInner('<div class="bootstrap-form-buttonset-org" style="display:none"></div>');
 			this._$element.append($btnGroup);
 
@@ -125,6 +128,8 @@
 		_detachButtonGroupFromInputs: function () {
 			if (this._options.isVertical) {
 				this._$element.children('div.btn-group-vertical').remove();
+			} else if(this._options.isJustified) {
+				this._$element.children('div.btn-group-justified').remove();
 			} else {
 				this._$element.children('div.btn-group').remove();
 			}
@@ -133,7 +138,14 @@
 
 		_syncButtonStates: function () {
 			var that = this;
-			this._$element.children('.btn-group').children('button').each(function () {
+			var group = this._$element.children('.btn-group');
+			var btns;
+			if(this._options.isJustified){
+				btns = group.children(".btn-group").children("button");
+			} else {
+				btns.children('button');
+			}
+			btns.each(function () {
 				var $btn = $(this);
 				var id = $btn.attr('data-input-id');
 				if (that._inputs[id].$input.prop('disabled')) {
@@ -179,7 +191,7 @@
 				constructOptions = orgArgs[0];
 			} else if (typeof orgArgs[0] === 'string') {
 				isMethodCall = true;
-				methodArgs = Array.prototype.slice.call(orgArgs, 1)
+				methodArgs = Array.prototype.slice.call(orgArgs, 1);
 			}
 			this.each(function () {
 				if (undefined === $.data(this, 'plugin_' + PLUGIN_NAME)) {
