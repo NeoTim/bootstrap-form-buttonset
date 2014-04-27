@@ -51,12 +51,12 @@
 				if (!isBootstrap3()) {
 					$btnGroup.addClass('btn-group');
 				}
-				$btnGroup.addClass('btn-group-vertical');
+				$btnGroup.addClass('btn-group btn-group-vertical');
 			} else if(this._options.isJustified) {
 				if (!isBootstrap3()) {
 					$btnGroup.addClass('btn-group');
 				}
-				$btnGroup.addClass('btn-group-justified');
+				$btnGroup.addClass('btn-group btn-group-justified');
 			} else {
 				$btnGroup.addClass('btn-group');
 			}
